@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Softable — Plano de Carreira & PDI</title>
+<style>
+/* ── RESET & BASE ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --pu:#534AB7;--pu-l:#EEEDFE;--pu-m:#7F77DD;
+  --bl:#185FA5;--bl-l:#E6F1FB;
+  --gr:#0F6E56;--gr-l:#E1F5EE;
+  --am:#854F0B;--am-l:#FAEEDA;
+  --gy:#5F5E5A;--gy-l:#F1EFE8;
+  --tx:#1a1a18;--tx2:#6b6b67;--tx3:#9b9b96;
+  --bd:rgba(0,0,0,0.1);--bd2:rgba(0,0,0,0.18);
+  --bg:#fafaf8;--sf:#ffffff;
+  --r:10px;--rl:14px;
+}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--tx);font-size:15px;line-height:1.6}
+
+/* ── PRINT ── */
+@media print{
+  .no-print{display:none!important}
+  body{background:#fff;font-size:12px}
+  .card,.form-section{break-inside:avoid;box-shadow:none!important;border:1px solid #ddd!important}
+  .step-content{display:block!important}
+  .page{display:block!important}
+  #page-carreira{display:none!important}
+  .topbar,.sidebar{display:none!important}
+  .main{padding:.5rem}
+  h1,h2,h3{break-after:avoid}
+  .print-header{display:block!important}
+}
+.print-header{display:none;text-align:center;padding:1rem 0 .5rem;border-bottom:2px solid var(--pu);margin-bottom:1rem}
+.print-header h1{font-size:20px;font-weight:700;color:var(--pu)}
+.print-header p{font-size:12px;color:var(--tx2);margin-top:4px}
+
+/* ── TOPBAR ── */
+.topbar{position:sticky;top:0;z-index:100;background:var(--sf);border-bottom:1px solid var(--bd);display:flex;align-items:center;padding:0 1.25rem;height:54px;gap:0}
+.logo{font-size:20px;font-weight:800;color:var(--tx);margin-right:2rem;letter-spacing:-0.5px;flex-shrink:0}
+.logo em{color:var(--pu);font-style:normal}
+.nav{display:flex;height:100%;overflow-x:auto}
+.nav-btn{display:flex;align-items:center;padding:0 1rem;font-size:13px;font-weight:500;cursor:pointer;border-bottom:2.5px solid transparent;color:var(--tx2);background:none;border-top:none;border-left:none;border-right:none;font-family:inherit;transition:all .15s;white-space:nowrap;flex-shrink:0}
+.nav-btn:hover{color:var(--tx)}
+.nav-btn.active{color:var(--pu);border-bottom-color:var(--pu)}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px;flex-shrink:0}
+.area-pill{font-size:11px;padding:3px 9px;border-radius:20px;background:var(--pu-l);color:var(--pu);font-weight:700;display:none}
+.area-pill.on{display:inline-flex}
+.btn-pdf{padding:6px 14px;border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;border:1.5px solid var(--pu);background:var(--pu);color:#fff;font-family:inherit;transition:all .15s;white-space:nowrap}
+.btn-pdf:hover{background:#3C3489}
+
+/* ── SHELL ── */
+.shell{display:flex;min-height:calc(100vh - 54px)}
+.sidebar{width:220px;min-width:220px;border-right:1px solid var(--bd);padding:1rem 0;background:var(--sf);position:sticky;top:54px;height:calc(100vh - 54px);overflow-y:auto;flex-shrink:0}
+.sb-sec{padding:.15rem .8rem;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.08em;margin-top:.9rem;margin-bottom:.2rem}
+.sb-item{display:flex;align-items:center;gap:8px;padding:6px 10px;cursor:pointer;font-size:13px;color:var(--tx2);border-radius:7px;margin:1px 5px;transition:all .12s;border:none;background:none;font-family:inherit;width:calc(100% - 10px);text-align:left}
+.sb-item:hover{background:var(--gy-l);color:var(--tx)}
+.sb-item.active{background:var(--pu-l);color:var(--pu);font-weight:600}
+.sb-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.main{flex:1;padding:1.75rem 2rem;max-width:880px;min-width:0}
+
+/* ── PAGES ── */
+.page{display:none}
+.page.active{display:block;animation:fi .2s ease}
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.ptitle{font-size:26px;font-weight:700;margin-bottom:.25rem;letter-spacing:-.5px}
+.psub{font-size:14px;color:var(--tx2);margin-bottom:1.5rem}
+
+/* ── CAREER LEVELS ── */
+.lvl-strip{display:flex;gap:3px;margin-bottom:1.5rem}
+.lvl-pill{flex:1;padding:9px 6px;text-align:center;border-radius:8px;cursor:pointer;font-size:12px;font-weight:700;border:2px solid transparent;transition:all .15s;user-select:none}
+.lp-e{background:var(--gy-l);color:var(--gy)}.lp-j{background:var(--bl-l);color:var(--bl)}
+.lp-m{background:var(--gr-l);color:var(--gr)}.lp-s{background:var(--pu-l);color:var(--pu)}
+.lvl-pill.sel{border-color:currentColor;transform:translateY(-2px);box-shadow:0 3px 10px rgba(0,0,0,.09)}
+.career-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rl);padding:1.5rem;margin-bottom:1rem;border-top-width:3px}
+.career-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.25rem;flex-wrap:wrap;gap:.5rem}
+.career-lname{font-size:20px;font-weight:700;letter-spacing:-.3px}
+.career-atag{font-size:12px;color:var(--tx2);margin-top:2px}
+.comps-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
+@media(max-width:600px){.comps-grid{grid-template-columns:1fr}}
+.comp-item{padding:10px 12px;border-radius:8px;background:var(--bg)}
+.cn{font-size:13px;font-weight:700;margin-bottom:2px}
+.cd{font-size:12px;color:var(--tx2);line-height:1.5}
+.lvl-footer{display:flex;gap:8px;align-items:center;margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--bd);flex-wrap:wrap}
+.tip{background:var(--pu-l);border-radius:var(--r);padding:.9rem 1.1rem;font-size:13.5px;color:var(--pu);line-height:1.6;margin-bottom:1rem}
+.tip strong{font-weight:700}
+
+/* ── AREA SELECT ── */
+.welcome{text-align:center;padding:1.5rem 0 1rem}
+.w-title{font-size:28px;font-weight:800;margin-bottom:.4rem;letter-spacing:-.5px}
+.w-sub{font-size:14px;color:var(--tx2);max-width:460px;margin:0 auto 1.75rem;line-height:1.6}
+.area-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.75rem;margin-bottom:1.5rem}
+@media(max-width:500px){.area-grid{grid-template-columns:1fr}}
+.area-card{padding:1.25rem;border-radius:var(--rl);border:2px solid var(--bd);cursor:pointer;transition:all .15s;background:var(--sf);text-align:left;font-family:inherit}
+.area-card:hover{transform:translateY(-2px);box-shadow:0 5px 18px rgba(0,0,0,.08)}
+.area-icon{font-size:26px;margin-bottom:.4rem;display:block}
+.area-name{font-size:14px;font-weight:700;margin-bottom:2px}
+.area-desc{font-size:12px;color:var(--tx2)}
+.ac-dev{border-color:var(--pu);background:var(--pu-l)}
+.ac-adm{border-color:var(--bl);background:var(--bl-l)}
+.ac-fin{border-color:var(--gr);background:var(--gr-l)}
+.ac-com{border-color:var(--am);background:var(--am-l)}
+
+/* ── STEPS NAV ── */
+.steps-nav{display:flex;gap:5px;margin-bottom:1.5rem;overflow-x:auto;padding-bottom:3px}
+.step-btn{display:flex;align-items:center;gap:6px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;border-radius:8px;background:none;border:1.5px solid var(--bd2);color:var(--tx2);font-family:inherit;transition:all .12s;white-space:nowrap;flex-shrink:0}
+.step-num{width:18px;height:18px;border-radius:50%;background:var(--bd);color:var(--tx2);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0}
+.step-btn.done .step-num{background:var(--gr);color:#fff}
+.step-btn.active{border-color:var(--pu);background:var(--pu-l);color:var(--pu)}
+.step-btn.active .step-num{background:var(--pu);color:#fff}
+.step-content{display:none}
+.step-content.active{display:block}
+
+/* ── PROGRESS ── */
+.pdi-prog{display:flex;gap:4px;margin-bottom:1.5rem}
+.prog-s{height:4px;border-radius:2px;flex:1;background:var(--bd);transition:background .3s}
+.prog-s.done{background:var(--pu)}.prog-s.cur{background:var(--pu-m)}
+
+/* ── FORM ── */
+.form-section{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rl);padding:1.5rem;margin-bottom:1rem}
+.fs-title{font-size:15px;font-weight:700;margin-bottom:1.25rem;padding-bottom:.75rem;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:7px}
+.fg{margin-bottom:1rem}
+.fl{font-size:11px;font-weight:700;color:var(--tx2);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em}
+.req{color:#E24B4A}
+.fi,.fs,.ft{width:100%;border:1.5px solid var(--bd2);border-radius:8px;padding:8px 11px;font-size:14px;background:var(--bg);color:var(--tx);font-family:inherit;transition:border-color .15s}
+.fi:focus,.fs:focus,.ft:focus{outline:none;border-color:var(--pu);background:#fff}
+.ft{min-height:88px;resize:vertical}
+.fh{font-size:11.5px;color:var(--tx3);margin-top:3px;line-height:1.4}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:540px){.row2{grid-template-columns:1fr}}
+
+/* ── CHIPS ── */
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:2px}
+.chip{padding:5px 12px;border-radius:20px;font-size:12.5px;cursor:pointer;border:1.5px solid var(--bd2);background:var(--bg);color:var(--tx2);transition:all .12s;user-select:none;font-family:inherit}
+.chip:hover{border-color:var(--pu-m);color:var(--tx)}
+.chip.on{background:var(--pu-l);color:var(--pu);border-color:var(--pu-m);font-weight:700}
+
+/* ── BUTTONS ── */
+.btn{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;border:1.5px solid var(--bd2);background:var(--sf);color:var(--tx);font-family:inherit;transition:all .12s}
+.btn:hover{background:var(--bg)}
+.btn-p{background:var(--pu);color:#fff;border-color:var(--pu)}.btn-p:hover{background:#3C3489}
+.btn-sm{padding:5px 12px;font-size:12px}
+.btn-row{display:flex;gap:8px;margin-top:1.25rem;flex-wrap:wrap;align-items:center}
+
+/* ── BADGES ── */
+.bdg{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700}
+.bg-g{background:#EAF3DE;color:#3B6D11}.bg-b{background:var(--bl-l);color:var(--bl)}
+.bg-a{background:var(--am-l);color:var(--am)}.bg-p{background:var(--pu-l);color:var(--pu)}
+
+/* ── NOTICE ── */
+.notice{padding:10px 14px;border-radius:9px;border-left:3px solid var(--pu);background:var(--pu-l);font-size:13px;color:var(--pu);margin-bottom:1.25rem;line-height:1.55}
+.notice strong{font-weight:700}
+
+/* ── FINAL ── */
+.final{text-align:center;padding:3rem 1rem}
+.final-ico{font-size:52px;margin-bottom:.75rem}
+.final-title{font-size:24px;font-weight:800;margin-bottom:.4rem;letter-spacing:-.5px}
+.final-sub{font-size:14px;color:var(--tx2);max-width:380px;margin:0 auto 1.75rem;line-height:1.6}
+.final-acts{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+
+/* ── MOBILE ── */
+@media(max-width:700px){
+  .sidebar{display:none}
+  .main{padding:1rem}
+  .lvl-strip{gap:2px}
+  .lvl-pill{font-size:10px;padding:7px 3px}
+  .career-lname{font-size:17px}
+}
+</style>
+</head>
+<body>
+
+<div class="print-header">
+  <h1>Softable — PDI Ciclo Q2 2026</h1>
+  <p id="ph-info">Autoavaliação do colaborador</p>
+</div>
+
+<div class="topbar no-print">
+  <div class="logo">soft<em>able</em></div>
+  <nav class="nav">
+    <button class="nav-btn active" onclick="goTab('carreira',this)">Plano de Carreira</button>
+    <button class="nav-btn" onclick="goTab('pdi',this)">Meu PDI</button>
+  </nav>
+  <div class="topbar-right">
+    <span class="area-pill" id="apill">—</span>
+    <button class="btn-pdf no-print" onclick="exportPDF()">⬇ Exportar PDF</button>
+  </div>
+</div>
+
+<div class="shell">
+  <aside class="sidebar no-print">
+    <div id="sb-c">
+      <div class="sb-sec">Área</div>
+      <button class="sb-item active" onclick="cArea('dev',this)" id="sbc-dev"><span class="sb-dot" style="background:var(--pu)"></span>Desenvolvedores</button>
+      <button class="sb-item" onclick="cArea('adm',this)" id="sbc-adm"><span class="sb-dot" style="background:var(--bl)"></span>Administrativo</button>
+      <button class="sb-item" onclick="cArea('fin',this)" id="sbc-fin"><span class="sb-dot" style="background:var(--gr)"></span>Financeiro</button>
+      <button class="sb-item" onclick="cArea('com',this)" id="sbc-com"><span class="sb-dot" style="background:var(--am)"></span>Comercial</button>
+      <div class="sb-sec" style="margin-top:1rem">Nível</div>
+      <button class="sb-item" onclick="cLevel('e')">01 — Estágio</button>
+      <button class="sb-item" onclick="cLevel('j')">02 — Entry-Level</button>
+      <button class="sb-item" onclick="cLevel('m')">03 — Mid-level</button>
+      <button class="sb-item" onclick="cLevel('s')">04 — Senior</button>
+    </div>
+    <div id="sb-p" style="display:none">
+      <div class="sb-sec">Minha Área</div>
+      <button class="sb-item" onclick="setPdiArea('dev')" id="sbp-dev"><span class="sb-dot" style="background:var(--pu)"></span>Desenvolvedores</button>
+      <button class="sb-item" onclick="setPdiArea('adm')" id="sbp-adm"><span class="sb-dot" style="background:var(--bl)"></span>Administrativo</button>
+      <button class="sb-item" onclick="setPdiArea('fin')" id="sbp-fin"><span class="sb-dot" style="background:var(--gr)"></span>Financeiro</button>
+      <button class="sb-item" onclick="setPdiArea('com')" id="sbp-com"><span class="sb-dot" style="background:var(--am)"></span>Comercial</button>
+      <div class="sb-sec" style="margin-top:1rem">Seções</div>
+      <button class="sb-item" id="sbs-0" onclick="goStep(0)">1 · Identificação</button>
+      <button class="sb-item" id="sbs-1" onclick="goStep(1)">2 · Autoavaliação</button>
+      <button class="sb-item" id="sbs-2" onclick="goStep(2)">3 · Competências</button>
+      <button class="sb-item" id="sbs-3" onclick="goStep(3)">4 · Metas</button>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- CARREIRA -->
+    <div id="page-carreira" class="page active">
+      <div class="ptitle" id="ct">Desenvolvedores — Plano de Carreira</div>
+      <div class="psub" id="cs">Explore os 4 níveis de evolução. Leia antes de preencher seu PDI.</div>
+      <div class="tip"><strong>Como usar:</strong> Localize seu nível atual, leia o que é esperado em cada competência e compare com o próximo nível. Depois clique em <strong>Meu PDI</strong> para fazer sua autoavaliação.</div>
+      <div class="lvl-strip" id="lstrip">
+        <div class="lvl-pill lp-e" onclick="cLevel('e')">01 Estágio</div>
+        <div class="lvl-pill lp-j" onclick="cLevel('j')">02 Entry-Level</div>
+        <div class="lvl-pill lp-m sel" onclick="cLevel('m')">03 Mid-level</div>
+        <div class="lvl-pill lp-s" onclick="cLevel('s')">04 Senior</div>
+      </div>
+      <div id="cc"></div>
+    </div>
+
+    <!-- PDI -->
+    <div id="page-pdi" class="page">
+
+      <div id="pdi-sel">
+        <div class="welcome">
+          <div class="w-title">Meu PDI</div>
+          <div class="w-sub">Selecione sua área para começar. Leia o Plano de Carreira antes de preencher.</div>
+        </div>
+        <div class="area-grid">
+          <button class="area-card ac-dev" onclick="setPdiArea('dev')"><span class="area-icon">🟣</span><div class="area-name">Desenvolvedores</div><div class="area-desc">TI · Engenharia · Software</div></button>
+          <button class="area-card ac-adm" onclick="setPdiArea('adm')"><span class="area-icon">🔵</span><div class="area-name">Administrativo</div><div class="area-desc">Operações · Processos · Suporte</div></button>
+          <button class="area-card ac-fin" onclick="setPdiArea('fin')"><span class="area-icon">🟢</span><div class="area-name">Financeiro</div><div class="area-desc">Finanças · Contabilidade · Controle</div></button>
+          <button class="area-card ac-com" onclick="setPdiArea('com')"><span class="area-icon">🟠</span><div class="area-name">Comercial</div><div class="area-desc">Vendas · Prospecção · Clientes</div></button>
+        </div>
+      </div>
+
+      <div id="pdi-form" style="display:none">
+        <div class="ptitle" id="pdi-title">Autoavaliação</div>
+        <div class="psub" id="pdi-sub">Responda com honestidade. Ao final, exporte o PDF e envie ao RH.</div>
+        <div class="notice"><strong>📋 Dica:</strong> Leia o <strong>Plano de Carreira</strong> da sua área antes de responder — use-o como referência para cada competência.</div>
+        <div class="pdi-prog" id="pprog"></div>
+        <div class="steps-nav no-print" id="snav"></div>
+        <div id="fsteps"></div>
+        <div class="btn-row no-print" id="fbtns"></div>
+      </div>
+
+      <div id="pdi-final" style="display:none">
+        <div class="final">
+          <div class="final-ico">✅</div>
+          <div class="final-title">PDI preenchido!</div>
+          <div class="final-sub">Agora exporte o PDF e envie para o RH ou seu gestor pelo WhatsApp ou e-mail.</div>
+          <div class="final-acts">
+            <button class="btn btn-p" onclick="exportPDF()">⬇ Exportar PDF</button>
+            <button class="btn" onclick="editPdi()">Editar respostas</button>
+            <button class="btn" onclick="newPdi()">Recomeçar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ================================================================
+// DATA — todas as áreas e níveis
+// ================================================================
+const A={
+  dev:{
+    label:'Desenvolvedores',bc:'#534AB7',
+    ct:'Desenvolvedores — Plano de Carreira',cs:'Trilha de evolução para engenharia e desenvolvimento de software',
+    lvls:{
+      e:{nm:'01 Estágio',cls:'lp-e',bc:'#5F5E5A',cs:[
+        {n:'Customer Success',d:'Repassa informações simples com cordialidade. Demonstra cuidado, mas sempre com supervisão.'},
+        {n:'Arquitetura de Soluções',d:'Começa a entender componentes técnicos. Enxerga limitações básicas de desempenho e segurança.'},
+        {n:'Output de Código',d:'Entregas simples, guiadas e com baixa autonomia. Output limitado com revisões frequentes.'},
+        {n:'Qualidade de Código',d:'Entregas sujeitas a ajustes frequentes. Aprende boas práticas e começa a aplicar padrões.'},
+        {n:'Engenharia',d:'Aprende e utiliza bases comuns da empresa.'},
+        {n:'Priorização',d:'Segue o cronograma do time. Precisa de acompanhamento frequente.'},
+        {n:'Comunicação',d:'Comunica de forma clara com pares, buscando aprender e se desenvolver.'}
+      ]},
+      j:{nm:'02 Entry-Level (E)',cls:'lp-j',bc:'#185FA5',cs:[
+        {n:'Customer Success',d:'Comunicação clara e profissional dentro do escopo. Conduz rituais de rotina com autonomia moderada.'},
+        {n:'Arquitetura de Soluções',d:'Compreende os principais blocos de arquitetura de uma solução. Sabe sugerir ajustes.'},
+        {n:'Arquitetura de Negócios',d:'Entende fluxos e regras de negócio das funcionalidades. Mapeia dependências simples.'},
+        {n:'Output de Código',d:'Entrega tarefas de complexidade moderada com boa qualidade. Sabe quando pedir ajuda.'},
+        {n:'Qualidade de Código',d:'Código confiável com alguns ajustes. Valida com testes manuais básicos.'},
+        {n:'Engenharia',d:'Busca entender, utilizar e sugerir alterações nas bases de código comuns.'},
+        {n:'Priorização',d:'Sabe priorizar tarefas e comunicar imprevistos. Estima com precisão razoável.'},
+        {n:'Comunicação',d:'Reporta progresso com clareza. Questiona decisões de forma respeitosa.'}
+      ]},
+      m:{nm:'03 Mid-level (M)',cls:'lp-m',bc:'#0F6E56',cs:[
+        {n:'Customer Success',d:'Comunicação ativa e confiável. Antecipa dúvidas, alinha expectativas e conduz reuniões com ownership.'},
+        {n:'Arquitetura de Soluções',d:'Projeta e justifica arquiteturas de certa complexidade. Avalia custo, performance, escalabilidade e segurança.'},
+        {n:'Arquitetura de Negócios',d:'Interpreta regras complexas e traduz em fluxos técnicos claros. Contribui para definição de escopo.'},
+        {n:'Output de Código',d:'Entrega funcionalidades completas, não apenas tarefas. Resolve problemas, não só implementa tickets.'},
+        {n:'Qualidade de Código',d:'Alto padrão com testes, arquitetura limpa e legibilidade. Referência entre o time entry-level.'},
+        {n:'Engenharia',d:'Amplia bibliotecas internas. Multiplica conhecimento com devs menos experientes.'},
+        {n:'Priorização',d:'Gerencia múltiplas frentes. Garante previsibilidade e antecipa riscos.'},
+        {n:'Comunicação',d:'Comunica decisões com precisão. Atua como ponte entre áreas. Reports claros para gerência.'}
+      ]},
+      s:{nm:'04 Senior (S)',cls:'lp-s',bc:'#534AB7',cs:[
+        {n:'Customer Success',d:'Referência técnica do cliente. Lidera conversas complexas e influencia decisões executivas.'},
+        {n:'Arquitetura de Soluções',d:'Decisões arquiteturais de alto impacto. Define padrões e princípios. Enxerga trade-offs profundos.'},
+        {n:'Arquitetura de Negócios',d:'Entende profundamente o negócio. Questiona premissas, identifica oportunidades e orienta o roadmap.'},
+        {n:'Output de Código',d:'Entrega módulos inteiros com múltiplos componentes. Acelerador do time. Prototipa rapidamente.'},
+        {n:'Qualidade de Código',d:'Define boas práticas do time. Reestrutura bases antigas e reduz dívida técnica.'},
+        {n:'Engenharia',d:'Lidera iniciativas. Mentora devs. Garante consistência e evolução contínua.'},
+        {n:'Priorização',d:'Gerencia escopos complexos entre squads. Mentalidade de liderança macro.'},
+        {n:'Comunicação',d:'Comunica com impacto. Influencia, direciona e alinha. Conduz workshops e revisões de arquitetura.'}
+      ]}
+    },
+    steps:[
+      {title:'Identificação',ico:'👤',fields:[
+        {t:'i',l:'Nome completo',id:'nome',req:1,ph:'Seu nome completo'},
+        {t:'r2',fs:[{t:'i',l:'Cargo atual',id:'cargo',req:1,ph:'Ex: Desenvolvedor Pleno'},{t:'s',l:'Nível',id:'nivel',opts:['Estágio','Entry-Level (Júnior)','Mid-level (Pleno)','Senior']}]},
+        {t:'r2',fs:[{t:'s',l:'Tempo de empresa',id:'tempo',opts:['Menos de 6 meses','6 meses – 1 ano','1 – 2 anos','2 – 4 anos','Mais de 4 anos']},{t:'i',l:'Stack principal',id:'stack',ph:'Ex: React, Node.js, Python'}]},
+        {t:'i',l:'Projetos atuais',id:'projetos',ph:'Ex: Módulo de pagamentos, API de autenticação'}
+      ]},
+      {title:'Avaliação técnica',ico:'💻',fields:[
+        {t:'c',l:'Como você avalia seu nível técnico atual?',id:'autoaval',opts:['Ainda em consolidação','Consistente no nível atual','Próximo do próximo nível','Já atuo no próximo nível']},
+        {t:'c',l:'Você entrega:',id:'entrega',opts:['Tarefas isoladas','Funcionalidades completas','Módulos completos','Soluções ponta a ponta']},
+        {t:'cm',l:'Arquitetura — você se sente capaz de: (múltipla escolha)',id:'arq',opts:['Implementar soluções já desenhadas','Participar da construção da arquitetura','Projetar arquitetura de média complexidade','Projetar arquitetura escalável e resiliente']},
+        {t:'ta',l:'Engenharia e qualidade — avalie cada item (❌ Não aplico · ⚠️ Parcialmente · ✅ Bem · ⭐ Referência)',id:'engq',ph:'1. Testes automatizados —\n2. Clean Code —\n3. SOLID / princípios de design —\n4. Versionamento (Git flow, PRs) —\n5. Code Review —\n6. Observabilidade (logs, métricas) —\n7. Performance e otimização —'},
+        {t:'c',l:'Nível de domínio técnico',id:'dom',opts:['Básico — executo com orientação','Intermediário — resolvo com autonomia','Avançado — otimizo e decido','Especialista — defino padrões']},
+        {t:'c',l:'Volume de entrega',id:'vol',opts:['Abaixo do esperado','Dentro do esperado','Acima do esperado']},
+        {t:'c',l:'Relacionamento com o cliente',id:'cli',opts:['Não interajo com o cliente','Interajo com apoio','Conduzo alinhamentos técnicos','Represento tecnicamente o projeto']},
+        {t:'c',l:'Liderança técnica (mesmo que não seja líder)',id:'lid',opts:['Não influencio decisões','Influencio tecnicamente','Mentoro colegas','Elevo o nível do time']}
+      ]},
+      {title:'Competências',ico:'🎯',fields:[
+        {t:'c',l:'Você acredita que já atua no próximo nível?',id:'gap',opts:['Sim','Parcialmente','Ainda não']},
+        {t:'ta',l:'Se sim ou parcialmente — quais comportamentos já executa? Quais ainda não?',id:'gapdesc',ph:'Descreva os comportamentos que já demonstra e os que ainda precisa desenvolver...'},
+        {t:'cm',l:'Prioridades de desenvolvimento — escolha até 3:',id:'prio',opts:['Engenharia de soluções','Excelência em código','Performance','Mentalidade de produto','Comunicação técnica','Multiplicação de conhecimento','Impacto organizacional']},
+        {t:'cm',l:'Treinamentos que seriam úteis:',id:'train',opts:['Técnico','Gestão de Projetos','Soft Skills','Ferramentas Digitais','Metodologias Ágeis','Liderança','Idiomas']},
+        {t:'cm',l:'Ambiente e suporte — o que você sente ter hoje:',id:'sup',opts:['Clareza de expectativa técnica','Espaço para propor melhorias','Feedbacks suficientes','Desafios adequados ao nível']}
+      ]},
+      {title:'Metas',ico:'🚀',fields:[
+        {t:'ta',l:'Metas do próximo ciclo trimestral',id:'metas',h:'Defina 3 metas: técnica, comportamental e de impacto',ph:'1. Meta técnica: Ex — Implementar testes em 80% do módulo X\n2. Meta comportamental: Ex — Liderar 2 refinamentos técnicos\n3. Meta de impacto: Ex — Reduzir retrabalho em 20%'},
+        {t:'ta',l:'O que a empresa poderia fazer para acelerar sua evolução?',id:'emp',ph:'Treinamentos, ferramentas, mentoria, acesso a projetos maiores...'},
+        {t:'ta',l:'Observações adicionais (opcional)',id:'obs',ph:'Conquistas do ciclo anterior, dificuldades, aprendizados importantes...'}
+      ]}
+    ]
+  },
+  adm:{
+    label:'Administrativo',bc:'#185FA5',
+    ct:'Administrativo — Plano de Carreira',cs:'Trilha de evolução para funções administrativas e de suporte operacional',
+    lvls:{
+      e:{nm:'01 Estágio',cls:'lp-e',bc:'#5F5E5A',cs:[
+        {n:'Organização',d:'Executa tarefas simples com supervisão. Mantém documentos organizados seguindo padrões estabelecidos.'},
+        {n:'Comunicação',d:'Redige e-mails simples com apoio. Responde solicitações básicas com supervisão.'},
+        {n:'Processos Internos',d:'Começa a entender os fluxos da empresa. Executa tarefas guiadas com baixa autonomia.'},
+        {n:'Atendimento',d:'Realiza atendimentos simples com cordialidade e supervisão disponível.'},
+        {n:'Documentação',d:'Arquiva documentos conforme orientação. Aprende os padrões documentais da empresa.'}
+      ]},
+      j:{nm:'02 Entry-Level (E)',cls:'lp-j',bc:'#185FA5',cs:[
+        {n:'Organização',d:'Organiza e prioriza demandas com autonomia moderada. Gerencia documentos sem supervisão constante.'},
+        {n:'Comunicação',d:'Redige comunicações claras e profissionais. Conduz alinhamentos rotineiros internos e externos.'},
+        {n:'Processos Internos',d:'Executa e sugere melhorias nos processos. Identifica inconsistências e comunica.'},
+        {n:'Atendimento',d:'Conduz atendimentos com autonomia. Escala casos complexos adequadamente.'},
+        {n:'Documentação',d:'Mantém controles atualizados. Propõe pequenas melhorias de organização documental.'}
+      ]},
+      m:{nm:'03 Mid-level (M)',cls:'lp-m',bc:'#0F6E56',cs:[
+        {n:'Organização',d:'Gerencia múltiplas demandas com previsibilidade. Propõe e implementa melhorias de processo no setor.'},
+        {n:'Comunicação',d:'Comunica com diferentes perfis: liderança, outros setores, externos. Elabora relatórios estruturados.'},
+        {n:'Processos Internos',d:'Documenta e melhora processos existentes. Referência para colegas e novos colaboradores.'},
+        {n:'Atendimento',d:'Resolve questões complexas autonomamente. Garante agilidade e satisfação interna.'},
+        {n:'Documentação',d:'Cria e mantém documentação completa e atualizada. Garante conformidade documental do setor.'}
+      ]},
+      s:{nm:'04 Senior (S)',cls:'lp-s',bc:'#534AB7',cs:[
+        {n:'Organização',d:'Lidera e reestrutura processos administrativos. Define padrões e garante eficiência operacional.'},
+        {n:'Comunicação',d:'Representa o setor em reuniões estratégicas. Comunica com impacto com parceiros de alto nível.'},
+        {n:'Processos Internos',d:'Cria processos que elevam qualidade e eficiência de toda a área. Garante conformidade legal.'},
+        {n:'Atendimento',d:'Define padrões de atendimento. Mentora colegas e garante a evolução contínua do time.'},
+        {n:'Documentação',d:'Define políticas documentais. Implanta sistemas e ferramentas de gestão documental.'}
+      ]}
+    },
+    steps:[
+      {title:'Identificação',ico:'👤',fields:[
+        {t:'i',l:'Nome completo',id:'nome',req:1,ph:'Seu nome completo'},
+        {t:'r2',fs:[{t:'i',l:'Cargo atual',id:'cargo',req:1,ph:'Ex: Assistente Administrativo'},{t:'s',l:'Nível',id:'nivel',opts:['Estágio','Entry-Level (Júnior)','Mid-level (Pleno)','Senior']}]},
+        {t:'s',l:'Tempo de empresa',id:'tempo',opts:['Menos de 6 meses','6 meses – 1 ano','1 – 2 anos','2 – 4 anos','Mais de 4 anos']},
+        {t:'ta',l:'Principais responsabilidades do cargo',id:'resp',ph:'Ex: gestão de contratos, agenda, atendimento interno, compras...'}
+      ]},
+      {title:'Autoavaliação',ico:'📋',fields:[
+        {t:'c',l:'Como você gerencia suas demandas?',id:'dem',opts:['Preciso de direcionamento constante','Organizo com autonomia básica','Priorizo e gerencio múltiplas demandas','Antecipo e reestrutura processos']},
+        {t:'c',l:'Em relação aos processos do setor, você:',id:'proc',opts:['Segue os processos estabelecidos','Identifica inconsistências e comunica','Sugere e implementa melhorias','Lidera a reestruturação de processos']},
+        {t:'c',l:'Nível de autonomia no trabalho',id:'aut',opts:['Dependente — precisa de validação frequente','Autônomo — executo sem supervisão constante','Responsável — decido e comunico impactos','Referência — oriento outros no setor']},
+        {t:'c',l:'Como você comunica com diferentes públicos?',id:'com',opts:['Bem com colegas próximos','Com liderança direta','Adapto para diferentes perfis','Represento o setor em contextos estratégicos']},
+        {t:'c',l:'Atendimento — você consegue:',id:'atd',opts:['Realizar atendimentos simples com apoio','Conduzir atendimentos com autonomia','Resolver questões complexas independentemente','Definir padrões e treinar outros']},
+        {t:'c',l:'Gestão documental — você:',id:'doc',opts:['Arquiva conforme orientação','Mantém arquivos atualizados proativamente','Cria e aprimora sistemas de arquivamento','Define políticas documentais do setor']},
+        {t:'c',l:'Conformidade e legislação — você:',id:'conf',opts:['Segue regras sem aprofundamento','Conhece regras aplicáveis ao cargo','Garante conformidade no setor','Orienta a empresa em questões regulatórias']},
+        {t:'c',l:'Volume de entregas',id:'vol',opts:['Abaixo do esperado','Dentro do esperado','Acima do esperado']},
+        {t:'ta',l:'Descreva um processo que você melhorou ou poderia melhorar',id:'melhoria',ph:'Como estava, o que você fez ou propõe fazer e qual seria o impacto...'}
+      ]},
+      {title:'Competências',ico:'🎯',fields:[
+        {t:'cm',l:'Competências prioritárias — escolha até 3:',id:'prio',opts:['Gestão de processos','Comunicação profissional','Ferramentas digitais','Gestão documental','Conformidade e legislação','Atendimento ao cliente interno','Liderança de equipe']},
+        {t:'cm',l:'Treinamentos que seriam úteis:',id:'train',opts:['Ferramentas Digitais','Comunicação','Gestão de Projetos','Compliance','Soft Skills','Liderança']}
+      ]},
+      {title:'Metas',ico:'🚀',fields:[
+        {t:'ta',l:'Metas do próximo ciclo trimestral',id:'metas',h:'Defina 3 metas: operacional, comportamental e de melhoria',ph:'1. Meta operacional: Ex — Digitalizar 100% dos contratos\n2. Meta comportamental: Ex — Conduzir 2 reuniões sem supervisão\n3. Meta de melhoria: Ex — Reduzir tempo de resposta em 30%'},
+        {t:'ta',l:'O que a empresa poderia fazer para acelerar sua evolução?',id:'emp',ph:'Treinamentos, ferramentas, acesso a informações, suporte da liderança...'},
+        {t:'ta',l:'Observações adicionais (opcional)',id:'obs',ph:'Conquistas, dificuldades, aprendizados do ciclo anterior...'}
+      ]}
+    ]
+  },
+  fin:{
+    label:'Financeiro',bc:'#0F6E56',
+    ct:'Financeiro — Plano de Carreira',cs:'Trilha de evolução para a área financeira, contábil e de controle',
+    lvls:{
+      e:{nm:'01 Estágio',cls:'lp-e',bc:'#5F5E5A',cs:[
+        {n:'Análise Financeira',d:'Executa lançamentos e conciliações simples com supervisão. Aprende os sistemas financeiros.'},
+        {n:'Controle e Relatórios',d:'Auxilia na elaboração de relatórios básicos com apoio.'},
+        {n:'Conformidade',d:'Aprende normas e boas práticas contábeis e fiscais aplicáveis à empresa.'},
+        {n:'Planejamento',d:'Apoia processos de orçamento com tarefas guiadas e baixa autonomia.'},
+        {n:'Conciliação',d:'Realiza conciliações simples com conferência obrigatória do superior.'}
+      ]},
+      j:{nm:'02 Entry-Level (E)',cls:'lp-j',bc:'#185FA5',cs:[
+        {n:'Análise Financeira',d:'Realiza análises básicas de custos, receitas e fluxo de caixa. Identifica e reporta discrepâncias.'},
+        {n:'Controle e Relatórios',d:'Elabora relatórios periódicos com autonomia. Mantém controles atualizados.'},
+        {n:'Conformidade',d:'Conhece e aplica normas fiscais e contábeis relevantes. Apoia auditorias internas.'},
+        {n:'Planejamento',d:'Contribui para processos de orçamento. Acompanha indicadores básicos e alerta desvios.'},
+        {n:'Conciliação',d:'Realiza conciliações bancárias com autonomia. Registra e reporta divergências.'}
+      ]},
+      m:{nm:'03 Mid-level (M)',cls:'lp-m',bc:'#0F6E56',cs:[
+        {n:'Análise Financeira',d:'Realiza análises complexas e interpreta dados para apoiar decisões estratégicas.'},
+        {n:'Controle e Relatórios',d:'Elabora relatórios gerenciais com insights. Apresenta resultados com clareza para a liderança.'},
+        {n:'Conformidade',d:'Garante conformidade fiscal, contábil e trabalhista. Lidera auditorias internas.'},
+        {n:'Planejamento',d:'Participa ativamente do planejamento financeiro e orçamentário. Propõe ações corretivas.'},
+        {n:'Conciliação',d:'Garante acurácia das conciliações. Propõe melhorias nos controles do setor.'}
+      ]},
+      s:{nm:'04 Senior (S)',cls:'lp-s',bc:'#534AB7',cs:[
+        {n:'Análise Financeira',d:'Lidera análises estratégicas. Define metodologias e padrões para o time.'},
+        {n:'Controle e Relatórios',d:'Define estrutura de relatórios gerenciais e dashboards. Apresenta para diretoria.'},
+        {n:'Conformidade',d:'Responsável pela conformidade fiscal e contábil. Representa em alto risco regulatório.'},
+        {n:'Planejamento',d:'Lidera o planejamento estratégico financeiro. Define metas e monitora performance.'},
+        {n:'Conciliação',d:'Define políticas de controle financeiro. Garante integridade total dos dados contábeis.'}
+      ]}
+    },
+    steps:[
+      {title:'Identificação',ico:'👤',fields:[
+        {t:'i',l:'Nome completo',id:'nome',req:1,ph:'Seu nome completo'},
+        {t:'r2',fs:[{t:'i',l:'Cargo atual',id:'cargo',req:1,ph:'Ex: Analista Financeiro Jr'},{t:'s',l:'Nível',id:'nivel',opts:['Estágio','Entry-Level (Júnior)','Mid-level (Pleno)','Senior']}]},
+        {t:'s',l:'Tempo de empresa',id:'tempo',opts:['Menos de 6 meses','6 meses – 1 ano','1 – 2 anos','2 – 4 anos','Mais de 4 anos']},
+        {t:'i',l:'Sistemas e ferramentas que utiliza',id:'sis',ph:'Ex: ERP SAP/TOTVS/Omie, Excel avançado, Power BI...'}
+      ]},
+      {title:'Autoavaliação',ico:'📊',fields:[
+        {t:'c',l:'Análise financeira — você consegue:',id:'an',opts:['Lançar dados com orientação','Analisar fluxo de caixa e relatórios básicos','Interpretar dados e propor ações corretivas','Liderar análises estratégicas de alto impacto']},
+        {t:'c',l:'Conciliação contábil — você:',id:'con',opts:['Realiza tarefas simples com conferência','Realiza conciliações bancárias com autonomia','Garante acurácia e propõe melhorias nos controles','Define políticas de controle e audita o processo']},
+        {t:'c',l:'Controle e relatórios — você:',id:'rel',opts:['Preenche planilhas com dados fornecidos','Elabora relatórios periódicos com autonomia','Produz relatórios gerenciais com análise e insights','Define estrutura de relatórios para a diretoria']},
+        {t:'ta',l:'Autoavalie seus conhecimentos por ferramenta (❌ ⚠️ ✅ ⭐)',id:'ferr',ph:'1. ERP da empresa —\n2. Excel avançado / Power Query —\n3. DRE, Balanço Patrimonial, Fluxo de Caixa —\n4. Impostos e obrigações acessórias —\n5. Auditoria interna —\n6. Planejamento e orçamento (budget) —'},
+        {t:'c',l:'Conformidade fiscal e contábil — você:',id:'conf',opts:['Segue regras sem aprofundamento técnico','Conhece as obrigações aplicáveis ao cargo','Garante conformidade e identifica riscos','Representa a empresa em alto risco regulatório']},
+        {t:'c',l:'Planejamento financeiro — você:',id:'plan',opts:['Executa tarefas do orçamento com apoio','Contribui para o processo de orçamento','Participa ativamente e monitora KPIs','Lidera o planejamento estratégico financeiro']},
+        {t:'c',l:'Capacidade analítica',id:'cap',opts:['Descritiva — relato o que aconteceu','Diagnóstica — explico por que aconteceu','Preditiva — projeto o que pode acontecer','Prescritiva — recomendo o que fazer']},
+        {t:'c',l:'Volume de entregas',id:'vol',opts:['Abaixo do esperado','Dentro do esperado','Acima do esperado']}
+      ]},
+      {title:'Competências',ico:'🎯',fields:[
+        {t:'cm',l:'Competências prioritárias — escolha até 3:',id:'prio',opts:['Análise de dados financeiros','Domínio de sistemas ERP','Conformidade e legislação fiscal','Relatórios gerenciais','Planejamento e orçamento','Gestão de riscos financeiros','Comunicação para liderança']},
+        {t:'cm',l:'Treinamentos que seriam úteis:',id:'train',opts:['Técnico — sistemas ERP','Excel / Power BI avançado','Contabilidade e fiscalidade','Planejamento financeiro','Comunicação gerencial','Gestão de riscos']}
+      ]},
+      {title:'Metas',ico:'🚀',fields:[
+        {t:'ta',l:'Metas do próximo ciclo trimestral',id:'metas',h:'Defina 3 metas: técnica, comportamental e de controle',ph:'1. Meta técnica: Ex — Dominar módulo de conciliação no ERP até maio\n2. Meta comportamental: Ex — Apresentar relatório mensal autonomamente\n3. Meta de controle: Ex — Reduzir divergências de caixa a zero'},
+        {t:'ta',l:'O que a empresa poderia fazer para acelerar sua evolução?',id:'emp',ph:'Treinamentos, sistemas, mentoria, acesso a informações estratégicas...'},
+        {t:'ta',l:'Observações adicionais (opcional)',id:'obs',ph:'Conquistas, dificuldades, aprendizados do ciclo anterior...'}
+      ]}
+    ]
+  },
+  com:{
+    label:'Comercial',bc:'#854F0B',
+    ct:'Comercial — Plano de Carreira',cs:'Trilha de evolução para vendas, prospecção e desenvolvimento comercial',
+    lvls:{
+      e:{nm:'01 Estágio',cls:'lp-e',bc:'#5F5E5A',cs:[
+        {n:'Prospecção',d:'Apoia na identificação de leads com supervisão. Aprende sobre produto e perfil de cliente ideal.'},
+        {n:'Relacionamento',d:'Realiza primeiros contatos com cordialidade, sempre com apoio de colega experiente.'},
+        {n:'Negociação',d:'Observa e aprende técnicas de negociação. Participa de reuniões como suporte.'},
+        {n:'Pipeline',d:'Apoia o registro e atualização do pipeline sob orientação constante.'},
+        {n:'Resultados',d:'Executa tarefas de apoio. Aprende métricas, indicadores e funil de vendas.'}
+      ]},
+      j:{nm:'02 Entry-Level (E)',cls:'lp-j',bc:'#185FA5',cs:[
+        {n:'Prospecção',d:'Prospecta clientes com autonomia moderada. Qualifica leads e conduz primeiras etapas do funil.'},
+        {n:'Relacionamento',d:'Mantém relacionamento ativo com leads. Conduz follow-ups e nutre leads com autonomia.'},
+        {n:'Negociação',d:'Negocia dentro de parâmetros definidos. Avança negociações simples sem suporte constante.'},
+        {n:'Pipeline',d:'Mantém pipeline atualizado. Reporta status e informa riscos de negociação.'},
+        {n:'Resultados',d:'Bate metas individuais com consistência. Reporta pipeline com precisão.'}
+      ]},
+      m:{nm:'03 Mid-level (M)',cls:'lp-m',bc:'#0F6E56',cs:[
+        {n:'Prospecção',d:'Desenvolve estratégias para contas mais complexas. Atua em verticais específicas com profundidade.'},
+        {n:'Relacionamento',d:'Constrói relacionamentos de longo prazo com clientes estratégicos. Identifica oportunidades de expansão.'},
+        {n:'Negociação',d:'Conduz negociações complexas com autonomia. Articula proposta de valor e fecha deals de maior ticket.'},
+        {n:'Pipeline',d:'Gerencia pipeline próprio com previsibilidade. Analisa dados e identifica padrões de conversão.'},
+        {n:'Resultados',d:'Supera metas consistentemente. Influencia estratégia comercial e apoia crescimento de colegas.'}
+      ]},
+      s:{nm:'04 Senior (S)',cls:'lp-s',bc:'#534AB7',cs:[
+        {n:'Prospecção',d:'Define estratégias de mercado e canais de aquisição. Identifica novos segmentos de alto valor.'},
+        {n:'Relacionamento',d:'Gerencia contas estratégicas em nível executivo. Representa a empresa em eventos do setor.'},
+        {n:'Negociação',d:'Lidera negociações de alto impacto. Define playbooks e melhores práticas para o time.'},
+        {n:'Pipeline',d:'Define metodologia comercial. Analisa funil macro e orienta a estratégia de vendas.'},
+        {n:'Resultados',d:'Define metas e KPIs do time. Lidera a área e contribui para o crescimento da empresa.'}
+      ]}
+    },
+    steps:[
+      {title:'Identificação',ico:'👤',fields:[
+        {t:'i',l:'Nome completo',id:'nome',req:1,ph:'Seu nome completo'},
+        {t:'r2',fs:[{t:'i',l:'Cargo atual',id:'cargo',req:1,ph:'Ex: Executivo de Vendas'},{t:'s',l:'Nível',id:'nivel',opts:['Estágio','Entry-Level (Júnior)','Mid-level (Pleno)','Senior']}]},
+        {t:'s',l:'Tempo de empresa',id:'tempo',opts:['Menos de 6 meses','6 meses – 1 ano','1 – 2 anos','2 – 4 anos','Mais de 4 anos']},
+        {t:'r2',fs:[{t:'i',l:'Segmentos que atende',id:'seg',ph:'Ex: SaaS B2B, PME, enterprise'},{t:'i',l:'Ferramentas que utiliza',id:'tools',ph:'Ex: HubSpot, Salesforce, Pipedrive'}]}
+      ]},
+      {title:'Autoavaliação',ico:'📈',fields:[
+        {t:'c',l:'Prospecção — você:',id:'pros',opts:['Aborda leads fornecidos com apoio','Prospecta de forma ativa com autonomia','Desenvolve estratégias para contas complexas','Define estratégias de mercado e novos segmentos']},
+        {t:'c',l:'Qualificação de leads — você:',id:'qual',opts:['Segue script básico de qualificação','Qualifica com base em critérios definidos (ICP)','Adapta critérios ao contexto e ajusta o ICP','Cria e revisa metodologias de qualificação']},
+        {t:'c',l:'Gestão de pipeline — você:',id:'pipe',opts:['Atualiza quando solicitado','Mantém pipeline atualizado e reporta com precisão','Gerencia com previsibilidade e identifica padrões','Define a metodologia comercial da empresa']},
+        {t:'c',l:'Negociação — você:',id:'neg',opts:['Segue roteiro com apoio do gestor','Negocia dentro de parâmetros definidos','Conduz negociações complexas autonomamente','Lidera negociações estratégicas de alto impacto']},
+        {t:'c',l:'Relacionamento com clientes — você:',id:'rel',opts:['Mantém contato básico durante a negociação','Constrói relacionamento ativo pós-venda','Gerencia relacionamentos de longo prazo','Gerencia contas estratégicas em nível executivo']},
+        {t:'c',l:'Conhecimento de produto/serviço — você:',id:'prod',opts:['Conhece os benefícios básicos','Demonstra o produto com segurança','Conecta às necessidades específicas do cliente','Posiciona estrategicamente para cada conta']},
+        {t:'c',l:'Atingimento de metas — você:',id:'meta_at',opts:['Estou abaixo da meta','Atinjo a meta com consistência','Supero a meta regularmente','Defino e garanto as metas do time']},
+        {t:'c',l:'Como você lida com objeções?',id:'obj',opts:['Encaminho ao gestor','Respondo objeções comuns com segurança','Antecipo e neutralizo objeções','Treino o time para lidar com objeções complexas']},
+        {t:'c',l:'Volume de atividades',id:'vol',opts:['Abaixo do esperado','Dentro do esperado','Acima do esperado']},
+        {t:'ta',l:'Descreva um processo de vendas do qual você se orgulha',id:'caso',ph:'Como foi a prospecção, a negociação, o que você fez de diferente e qual foi o resultado...'}
+      ]},
+      {title:'Competências',ico:'🎯',fields:[
+        {t:'cm',l:'Competências prioritárias — escolha até 3:',id:'prio',opts:['Técnicas de prospecção','Negociação avançada','Gestão de pipeline e CRM','Apresentação e demo de produto','Relacionamento com clientes executivos','Análise de dados comerciais','Liderança e mentoria de vendas']},
+        {t:'cm',l:'Treinamentos que seriam úteis:',id:'train',opts:['Técnicas de vendas','Negociação avançada','CRM / Ferramentas digitais','Comunicação executiva','Gestão de dados comerciais','Liderança de equipes']}
+      ]},
+      {title:'Metas',ico:'🚀',fields:[
+        {t:'ta',l:'Metas do próximo ciclo trimestral',id:'metas',h:'Defina 3 metas: resultado, comportamental e de processo',ph:'1. Meta de resultado: Ex — Bater 110% da meta de vendas\n2. Meta comportamental: Ex — Fazer 3 demos de produto autônomas\n3. Meta de processo: Ex — Manter taxa de conversão acima de 25%'},
+        {t:'ta',l:'O que a empresa poderia fazer para acelerar sua evolução?',id:'emp',ph:'Treinamentos, ferramentas CRM, mentoria, acesso a contas maiores...'},
+        {t:'ta',l:'Observações adicionais (opcional)',id:'obs',ph:'Conquistas, dificuldades, aprendizados do ciclo anterior...'}
+      ]}
+    ]
+  }
+};
+
+// ================================================================
+// STATE
+// ================================================================
+let cA='dev',cL='m',pA=null,pStep=0;
+
+// ================================================================
+// TABS
+// ================================================================
+function goTab(tab,btn){
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('page-carreira').classList.toggle('active',tab==='carreira');
+  document.getElementById('page-pdi').classList.toggle('active',tab==='pdi');
+  document.getElementById('sb-c').style.display=tab==='carreira'?'':'none';
+  document.getElementById('sb-p').style.display=tab==='pdi'?'':'none';
+}
+
+// ================================================================
+// CAREER
+// ================================================================
+function cArea(a,btn){
+  cA=a;
+  document.querySelectorAll('[id^="sbc-"]').forEach(e=>e.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  const ar=A[a];
+  document.getElementById('ct').textContent=ar.ct;
+  document.getElementById('cs').textContent=ar.cs;
+  renderCareer();
+}
+function cLevel(l){
+  cL=l;
+  const map={e:0,j:1,m:2,s:3};
+  document.querySelectorAll('.lvl-pill').forEach((p,i)=>p.classList.toggle('sel',i===map[l]));
+  renderCareer();
+}
+function renderCareer(){
+  const ar=A[cA],lv=ar.lvls[cL];
+  const nxt={e:'j',j:'m',m:'s',s:null},prv={e:null,j:'e',m:'j',s:'m'};
+  let h=`<div class="career-card" style="border-top-color:${lv.bc}">
+    <div class="career-hdr">
+      <div><div class="career-lname">${lv.nm}</div><div class="career-atag">${ar.label}</div></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        ${prv[cL]?`<button class="btn btn-sm" onclick="cLevel('${prv[cL]}')">← Anterior</button>`:''}
+        ${nxt[cL]?`<button class="btn btn-sm btn-p" onclick="cLevel('${nxt[cL]}')">Próximo nível →</button>`:'<span class="bdg bg-p">Nível máximo</span>'}
+      </div>
+    </div>
+    <div class="comps-grid">`;
+  lv.cs.forEach(c=>{h+=`<div class="comp-item"><div class="cn">${c.n}</div><div class="cd">${c.d}</div></div>`;});
+  h+=`</div><div class="lvl-footer">
+    <button class="btn btn-sm btn-p" onclick="document.querySelectorAll('.nav-btn')[1].click()">Preencher meu PDI →</button>
+    <span style="font-size:12px;color:var(--tx2)">Use este plano como referência na autoavaliação</span>
+  </div></div>`;
+  document.getElementById('cc').innerHTML=h;
+}
+
+// ================================================================
+// PDI
+// ================================================================
+function setPdiArea(a){
+  pA=a;pStep=0;
+  const ar=A[a];
+  document.getElementById('apill').textContent=ar.label;
+  document.getElementById('apill').classList.add('on');
+  document.querySelectorAll('[id^="sbp-"]').forEach(e=>e.classList.remove('active'));
+  const sb=document.getElementById('sbp-'+a);if(sb)sb.classList.add('active');
+  document.getElementById('pdi-sel').style.display='none';
+  document.getElementById('pdi-final').style.display='none';
+  document.getElementById('pdi-form').style.display='block';
+  document.getElementById('pdi-title').textContent='Autoavaliação — '+ar.label;
+  document.getElementById('ph-info').textContent='Área: '+ar.label+' · Ciclo Q2 2026';
+  buildForm();goStep(0);
+}
+function buildForm(){
+  const ar=A[pA],steps=ar.steps;
+  let pg='';steps.forEach((_,i)=>{pg+=`<div class="prog-s" id="ps-${i}"></div>`;});
+  document.getElementById('pprog').innerHTML=pg;
+  let sn='';steps.forEach((s,i)=>{sn+=`<button class="step-btn" id="sb-${i}" onclick="goStep(${i})"><span class="step-num">${i+1}</span>${s.ico} ${s.title}</button>`;});
+  document.getElementById('snav').innerHTML=sn;
+  let fh='';
+  steps.forEach((s,i)=>{
+    fh+=`<div class="step-content" id="sc-${i}"><div class="form-section"><div class="fs-title"><span>${s.ico}</span>${s.title}</div>`;
+    s.fields.forEach(f=>{fh+=rf(f);});
+    fh+=`</div></div>`;
+  });
+  document.getElementById('fsteps').innerHTML=fh;
+}
+function rf(f){
+  if(f.t==='i')return`<div class="fg"><label class="fl">${f.l}${f.req?'<span class="req"> *</span>':''}</label><input type="text" class="fi" id="f-${f.id}" placeholder="${f.ph||''}"></div>`;
+  if(f.t==='s')return`<div class="fg"><label class="fl">${f.l}</label><select class="fs" id="f-${f.id}">${(f.opts||[]).map(o=>`<option>${o}</option>`).join('')}</select></div>`;
+  if(f.t==='ta')return`<div class="fg"><label class="fl">${f.l}</label>${f.h?`<div class="fh">${f.h}</div>`:''}<textarea class="ft" id="f-${f.id}" placeholder="${f.ph||''}"></textarea></div>`;
+  if(f.t==='c')return`<div class="fg"><label class="fl">${f.l}</label><div class="chips" id="ch-${f.id}">${(f.opts||[]).map(o=>`<button class="chip" onclick="tc(this,'${f.id}',false)">${o}</button>`).join('')}</div></div>`;
+  if(f.t==='cm')return`<div class="fg"><label class="fl">${f.l}</label><div class="chips" id="ch-${f.id}">${(f.opts||[]).map(o=>`<button class="chip" onclick="tc(this,'${f.id}',true)">${o}</button>`).join('')}</div></div>`;
+  if(f.t==='r2'){let h=`<div class="row2">`;(f.fs||[]).forEach(ff=>{h+=rf(ff);});h+=`</div>`;return h;}
+  return'';
+}
+function tc(el,id,multi){
+  if(!multi)document.querySelectorAll(`#ch-${id} .chip`).forEach(c=>c.classList.remove('on'));
+  el.classList.toggle('on');
+}
+function goStep(s){
+  const ar=A[pA];if(!ar)return;
+  pStep=s;
+  const total=ar.steps.length;
+  document.querySelectorAll('.step-content').forEach((e,i)=>e.classList.toggle('active',i===s));
+  document.querySelectorAll('[id^="sb-"]').forEach((e,i)=>{
+    e.classList.toggle('active',i===s);
+    if(i<s)e.classList.add('done');else e.classList.remove('done');
+  });
+  document.querySelectorAll('[id^="ps-"]').forEach((e,i)=>{
+    e.classList.toggle('done',i<s);e.classList.toggle('cur',i===s);
+  });
+  document.querySelectorAll('[id^="sbs-"]').forEach((e,i)=>e.classList.toggle('active',i===s));
+  let b='';
+  if(s>0)b+=`<button class="btn" onclick="goStep(${s-1})">← Anterior</button>`;
+  if(s<total-1)b+=`<button class="btn btn-p" onclick="goStep(${s+1})">Próxima seção →</button>`;
+  else b+=`<button class="btn btn-p" onclick="finish()">Concluir PDI ✓</button>`;
+  b+=`<button class="btn" style="margin-left:auto" onclick="exportPDF()">⬇ PDF</button>`;
+  document.getElementById('fbtns').innerHTML=b;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function finish(){
+  document.getElementById('pdi-form').style.display='none';
+  document.getElementById('pdi-final').style.display='block';
+  window.scrollTo({top:0});
+}
+function editPdi(){
+  document.getElementById('pdi-form').style.display='block';
+  document.getElementById('pdi-final').style.display='none';
+}
+function newPdi(){
+  pA=null;pStep=0;
+  document.getElementById('pdi-form').style.display='none';
+  document.getElementById('pdi-final').style.display='none';
+  document.getElementById('pdi-sel').style.display='block';
+  document.getElementById('apill').classList.remove('on');
+  document.querySelectorAll('[id^="sbp-"]').forEach(e=>e.classList.remove('active'));
+}
+
+// ================================================================
+// EXPORT
+// ================================================================
+function exportPDF(){
+  if(!pA){alert('Selecione sua área e preencha o PDI antes de exportar.');return;}
+  document.querySelectorAll('.step-content').forEach(e=>e.style.display='block');
+  document.getElementById('pdi-form').style.display='block';
+  document.getElementById('pdi-final').style.display='none';
+  document.getElementById('pdi-sel').style.display='none';
+  window.print();
+  setTimeout(()=>{
+    document.querySelectorAll('.step-content').forEach((e,i)=>{
+      e.style.display='';e.classList.toggle('active',i===pStep);
+    });
+    if(pA){document.getElementById('pdi-form').style.display='block';}
+    else{document.getElementById('pdi-sel').style.display='block';document.getElementById('pdi-form').style.display='none';}
+  },800);
+}
+
+// ================================================================
+// INIT
+// ================================================================
+document.getElementById('sb-p').style.display='none';
+cArea('dev',document.getElementById('sbc-dev'));
+cLevel('m');
+</script>
+</body>
+</html>
